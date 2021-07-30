@@ -13,6 +13,7 @@
       <pTHatMin>235</pTHatMin>
       <pTHatMax>1000</pTHatMax>
       <eCM>5020</eCM>
+      <ttbar>1</ttbar>
     </PythiaGun>
   </Hard>
   

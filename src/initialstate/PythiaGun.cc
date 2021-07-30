@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) The JETSCAPE Collaboration, 2018
+1;5202;0c * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
  * 
@@ -49,20 +49,6 @@ void PythiaGun::InitTask() {
   readString("Next:numberShowProcess = 0");
   readString("Next:numberShowEvent = 0");
 
-  // Standard settings
-  readString(
-      "HardQCD:all = on"); // will repeat this line in the xml for demonstration
-  //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
-  //readString("HardQCD:qqbar2ccbar = on");
-  readString("HadronLevel:Decay = off");
-  readString("HadronLevel:all = off");
-  readString("PartonLevel:ISR = on");
-  readString("PartonLevel:MPI = on");
-  //readString("PartonLevel:FSR = on");
-  readString("PromptPhoton:all=on");
-  readString("WeakSingleBoson:all=off");
-  readString("WeakDoubleBoson:all=off");
-
   // For parsing text
   stringstream numbf(stringstream::app | stringstream::in | stringstream::out);
   numbf.setf(ios::fixed, ios::floatfield);
@@ -81,11 +67,15 @@ void PythiaGun::InitTask() {
   else
     readString("PartonLevel:FSR = off");
 
+  // GKK: read flag for ttbar
+  ttbar = GetXMLElementInt({"Hard", "PythiaGun", "ttbar"});
+
   pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
   pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
 
   flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
-
+  
+  if(!ttbar){
   JSINFO << MAGENTA << "Pythia Gun with FSR_on: " << FSR_on;
   JSINFO << MAGENTA << "Pythia Gun with " << pTHatMin << " < pTHat < "
          << pTHatMax;
@@ -97,6 +87,45 @@ void PythiaGun::InitTask() {
   numbf.str("PhaseSpace:pTHatMax = ");
   numbf << pTHatMax;
   readString(numbf.str());
+  }
+  else{
+    JSINFO << MAGENTA << "Pythia ttbar with FSR_on: " << FSR_on;
+  }
+    // Standard settings
+  if (!ttbar){
+  readString(
+  	     "HardQCD:all = on"); // will repeat this line in the xml for demonstration
+  //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
+  //readString("HardQCD:qqbar2ccbar = on");
+  readString("HadronLevel:Decay = off");
+  readString("HadronLevel:all = off");
+  readString("PartonLevel:ISR = on");
+  readString("PartonLevel:MPI = on");
+  //readString("PartonLevel:FSR = on");
+  readString("PromptPhoton:all=on");
+  readString("WeakSingleBoson:all=off");
+  readString("WeakDoubleBoson:all=off");
+  }
+  else{
+    readString("Top:gg2ttbar    = on");
+    readString("Top:qqbar2ttbar = on");
+    readString("6:m0 = 172.5");
+    readString("Tune:preferLHAPDF = 2");
+    readString("Main:timesAllowErrors = 10000");
+    readString("Check:epTolErr = 0.01");
+    readString("Beams:setProductionScalesFromLHEF = off");
+    readString("SLHA:minMassSM = 1000.");
+    readString("ParticleDecays:limitTau0 = on");
+    readString("ParticleDecays:tau0Max = 10");
+    readString("ParticleDecays:allowPhotonRadiation = on");
+    readString("Tune:pp 14");
+    readString("Tune:ee 7");
+    readString("MultipartonInteractions:pT0Ref=2.4024");
+    readString("MultipartonInteractions:ecmPow=0.25208");
+    readString("MultipartonInteractions:expPow=1.6");
+    readString("HadronLevel:Decay = off");
+    readString("HadronLevel:all = off");
+  }
 
   // random seed
   // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist

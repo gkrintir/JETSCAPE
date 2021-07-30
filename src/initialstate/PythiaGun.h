@@ -31,6 +31,7 @@ private:
   double pTHatMax;
   double eCM;
   bool FSR_on;
+  bool ttbar;
   int flag_useHybridHad;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
